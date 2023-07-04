@@ -1,0 +1,26 @@
+{{template config_path="design/email/header_template"}}
+<!--@subject {{trans "Email for the rejection of your request "}}  @-->
+<table>
+    <tr class="email-intro">
+        <td>
+            <p>
+                You have submitted a request for cancel order. Your request has been canceled.
+            </p>
+        </td>
+    </tr>
+    <tr class="email-information">
+        <td>
+            <table class="message-info">
+                <tr>
+                    <td align="center" style="text-align:left;width:30%;font-weight:bold;">ID:</td>
+                    <td align="center" style="padding-left:5px;text-align:left;width:70%;">{{var data.id}}</td>
+                </tr>
+                <tr>
+                    <td align="center" style="text-align:left;width:30%;font-weight:bold;">Recipient_name:</td>
+                    <td align="center" style="padding-left:5px;text-align:left;width:70%;">{{var data.recipient_name}}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+{{template config_path="design/email/footer_template"}}

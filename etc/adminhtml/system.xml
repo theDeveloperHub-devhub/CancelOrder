@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <system>
+        <tab id="developer_hub" translate="label" sortOrder="10">
+            <label>Developer Hub</label>
+        </tab>
+        <section id="order" translate="label" sortOrder="130" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Developer Hub</label>
+            <class>separator-top</class>
+            <tab>general</tab>
+            <resource>DevHub_OrderNote::DevHub</resource>
+            <group id="cancel_order" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Configuration Options For Cancel Order</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="notice" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Notice On Popup</label>
+                </field>
+                <field id="cancel_item" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Notice On Cancel Item</label>
+                </field>
+                <field id="label" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Label For Cancel Order Button</label>
+                </field>
+                <field id="label_cancel_item" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Label For Cancel Item Button</label>
+                </field>
+            </group>
+            <group id="email" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Email</label>
+                <field id="receiver" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Receiver Email Address</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

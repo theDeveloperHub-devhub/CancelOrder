@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="cancel_order" resource="sales" engine="innodb" comment="Form_Data">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="varchar" name="order_id" comment="Cancel Order ID"/>
+        <column xsi:type="varchar" name="order_reason" comment="Reason"/>
+        <column xsi:type="varchar" name="order_status" comment="Status"/>
+        <column xsi:type="varchar" name="email" comment="Email"/>
+        <column xsi:type="varchar" name="name" comment="Name"/>
+        <column xsi:type="varchar" name="item_status" comment="Item Status"/>
+        <column xsi:type="varchar" name="sku" comment="Item Sku"/>
+        <column xsi:type="varchar" name="item_id" comment="Item Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>

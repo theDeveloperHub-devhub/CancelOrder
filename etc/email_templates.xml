@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="cancelorder_emailoptions_send" label="Cancel Order" file="cancelorder_form.html" type="html" module="DeveloperHub_CancelOrder" area="frontend"/>
+    <template id="cancel_request" label="Cancel Order" file="requestcancel_form.html" type="html" module="DeveloperHub_CancelOrder" area="frontend"/>
+</config>

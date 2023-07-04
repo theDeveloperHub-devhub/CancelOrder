@@ -1,0 +1,12 @@
+{
+    "cancel_order": {
+        "column": {
+            "id": true,
+            "devhub-cancel-order-id": true,
+            "devhub-cancel-order-reason": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

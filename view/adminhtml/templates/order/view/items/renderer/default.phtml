@@ -1,0 +1,77 @@
+<?php
+
+use DeveloperHub\CancelOrder\Block\Index;
+use Magento\Framework\Escaper;
+use Magento\Sales\Block\Adminhtml\Order\View\Items\Renderer\DefaultRenderer;
+
+?>
+<?php /** @var DefaultRenderer $block */ ?>
+<?php /** @var Escaper $escaper */ ?>
+<?php $_item = $block->getItem() ?>
+<?php $_itemId = $_item->getItemId(); ?>
+<?php $block->setPriceDataObject($_item) ?>
+<?php
+$customBlock = $block->getLayout()->createBlock(Index::class);
+$collection = $customBlock->getCollection();
+if ($collection){
+    foreach ($collection as $item) {
+        $itemId[] = [
+            'item_id' => $item['item_id'],
+            'reason' => $item['reason'],
+            'item_status' => $item['item_status']
+        ];
+    }
+}
+
+?>
+<tr>
+    <?php $i = 0;
+    $columns = $block->getColumns();
+    $lastItemNumber = count($columns) ?>
+    <?php foreach ($columns as $columnName => $columnClass) : ?>
+        <?php $i++; ?>
+        <?php if ($columnName == 'cancel_order') :?>
+            <?php if ($collection):?>
+                <?php foreach ($itemId as $item): ?>
+                    <?php if ($item['item_id'] == $_itemId) : ?>
+                        <td class="<?= /* @noEscape */ $columnClass ?><?= /* @noEscape */ ($i === $lastItemNumber ? ' last' : '') ?>">
+                        <p style="color: red"><?php echo 'Reason:  ' . $item['reason']; ?></p>
+                        <?php if ($item['item_status'] == 1):?>
+                            <button id="item-cancellation" class= 'btn-btn secondary item-cancellation'
+                                    data-order-id="<?php echo $_item->getItemId(); ?>">
+                                <?php echo 'Cancel Item'  ?>
+                            </button>
+                            <button id="order-cancellation" class= 'primary order-cancellation'
+                                    data-order-id="<?php echo $_item->getItemId(); ?>">
+                                <?php echo 'Cancel Request'  ?>
+                            </button>
+                        <?php endif;?>
+                        <?php if ($item['item_status'] == 2):?>
+                            <?php echo '';?>
+                        <?php endif;?>
+                        <?php if ($item['item_status'] == 3):?>
+                            <?php echo '';?>
+                        <?php endif;?>
+                        </td>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif;?>
+        <?php else:?>
+                <td class="<?= /* @noEscape */ $columnClass ?><?= /* @noEscape */ ($i === $lastItemNumber ? ' last' : '') ?>">
+                    <?= $block->getColumnHtml($_item, $columnName) ?>
+                </td>
+            <?php endif;?>
+    <?php endforeach; ?>
+</tr>
+<div id="devhub-cancel-order-modal" style="display: none;">
+    <form action="" class="form cancel-order" id="devhub-cancellation-form" method="post"
+          data-hasrequired="<?= $escaper->escapeHtml(__('* Required Fields')) ?>"
+          data-mage-init='{"validation":{}}'>
+        <fieldset class="fieldset">
+            <div class="control">
+                <input type="hidden" name="order-cancellation" value="" class="order-cancellation-id">
+                <input type="hidden" name="item-cancellation" value="" class="order-cancellation-id">
+            </div>
+        </fieldset>
+    </form>
+</div>

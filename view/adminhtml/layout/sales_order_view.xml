@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="DeveloperHub_CancelOrder::js/select.js"/>
+        <script src="DeveloperHub_CancelOrder::js/custom.js"/>
+    </head>
+    <body>
+        <referenceBlock name="order_info" template="DeveloperHub_CancelOrder::order/view/info.phtml" />
+        <referenceBlock name="order_items">
+            <arguments>
+                <argument name="columns" xsi:type="array">
+                    <item name="custom_item_column" xsi:type="string" translate="true">Cancel Item</item>
+                </argument>
+            </arguments>
+            <referenceBlock name="default_order_items_renderer">
+                <arguments>
+                    <argument name="columns" xsi:type="array">
+                        <item name="cancel_order" xsi:type="string" translate="true">cancel_item</item>
+                    </argument>
+                </arguments>
+                <action method="setTemplate">
+                    <argument name="template" translate="true" xsi:type="string">DeveloperHub_CancelOrder::order/view/items/renderer/default.phtml</argument>
+                </action>
+            </referenceBlock>
+        </referenceBlock>
+    </body>
+</page>

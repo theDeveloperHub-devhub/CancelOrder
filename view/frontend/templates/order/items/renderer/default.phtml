@@ -1,0 +1,220 @@
+<?php
+
+/**
+ * @var DefaultRenderer $block
+ * @var LocaleFormatter $localeFormatter
+ * @var Escaper $escaper
+ */
+
+use DeveloperHub\CancelOrder\Block\Index;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Locale\LocaleFormatter;
+use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Sales\Block\Order\Item\Renderer\DefaultRenderer;
+use Magento\Sales\Block\Order\View;
+use Magento\Framework\Escaper;
+
+$_item = $block->getItem();
+$customBlock = $block->getLayout()->createBlock(Index::class);
+$collection = $customBlock->getCollection();
+if (isset($collection)) {
+    foreach ($collection as $item) {
+        $collectionId[] = $item['id'];
+        $itemId[] = [
+            'id' => $item['item_status'] ,
+            'item_sku' => $item['item_sku'],
+            'order_id' => $item['id'],
+            'order_status' => $item['status']
+        ];
+        $id[] = $item['item_status'];
+        $itemSku[] = $item['item_sku'];
+    }
+}
+$count = 0;
+$itemStatus = 1;
+$orderBlock = $block->getLayout()->createBlock(View::class);
+$orderData = $orderBlock->getOrder();
+$incrementId = $orderData->getIncrementId();
+$objectManager = ObjectManager::getInstance();
+$sessionManager = $objectManager->get(SessionManagerInterface::class);
+$sessionManager->start();
+$sessionManager->setData('custom_data', $incrementId);
+?>
+<tr id="order-item-row-<?= (int) $_item->getId() ?>">
+    <td class="col name" data-th="<?= $escaper->escapeHtml(__('Product Name')) ?>">
+        <strong class="product name product-item-name"><?= $escaper->escapeHtml($_item->getName()) ?></strong>
+        <?php if (isset($collection)) : ?>
+            <?php if (in_array($incrementId, $collectionId) && !in_array($_item->getSku(), $itemSku)):?>
+                <?php foreach ($itemId as $item): ?>
+                    <?php if ($item['order_status'] == 1):?>
+                        <?php echo '';?>
+                    <?php endif; ?>
+                <?php endforeach;?>
+            <?php endif;?>
+                <?php if (in_array($incrementId, $collectionId)) :?>
+                    <?php foreach ($itemId as $item) : ?>
+                        <?php if ($item['id'] == 1):?>
+                            <?php if ($item['item_sku'] == $_item->getSku() && $incrementId == $item['order_id']) :?>
+                                <p style="color: green">your request has been send </p>
+                            <?php endif;?>
+                        <?php endif; ?>
+                        <?php if ($item['id'] == 2):?>
+                            <?php if ($item['item_sku'] == $_item->getSku() && $item['order_id'] == $incrementId):?>
+                                <p style="color: red">your request has been cancelled </p>
+                            <?php endif;?>
+                        <?php endif;?>
+                        <?php if ($item['id'] == 3):?>
+                            <?php if ($item['item_sku'] == $_item->getSku() && $item['order_id'] == $incrementId):?>
+                                <p style="color: red">your item has been cancelled </p>
+                            <?php endif;?>
+                        <?php endif;?>
+                        <?php if ($item['item_sku'] == $_item->getSku() && $incrementId != $item['order_id']) :?>
+                            <button id="order-cancellation" class= 'btn btn-secondary order-cancellation'
+                                    data-order-id="<?php echo $_item->getItemId(); ?>"
+                                    data-order-sku="<?php echo $_item->getSku() ?>"
+                                    data-mage-init='{"example-modal": {"target": "#modal-content"}}'>
+                                <?php echo 'Cancel Item'  ?>
+                            </button>
+                            <div class="show" data-order-id="<?php echo $_item->getItemId(); ?>" ></div>
+                        <?php endif;?>
+                        <?php if ($item['item_sku'] != $_item->getSku() &&  $orderData->getRealOrderId() == $item['order_id']) :?>
+                            <?php if (in_array($_item->getSku(), $itemSku)):?>
+                                <?php echo ''?>
+                            <?php else: ?>
+                                <?php if ($count == 0 && $item['order_status'] != 1): ?>
+                                    <button id="order-cancellation" class= 'btn btn-secondary order-cancellation'
+                                            data-order-id="<?php echo $_item->getItemId(); ?>"
+                                            data-order-sku="<?php echo $_item->getSku() ?>"
+                                            data-mage-init='{"example-modal": {"target": "#modal-content"}}'>
+                                        <?php echo 'Cancel Item'  ?>
+                                    </button>
+                                    <div class="show" data-order-id="<?php echo $_item->getItemId(); ?>" ></div>
+                                    <?php $count++; ?>
+                                <?php endif;?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else:?>
+                    <button id="order-cancellation" class= 'btn btn-secondary order-cancellation'
+                            data-order-id="<?php echo $_item->getItemId(); ?>"
+                            data-order-sku="<?php echo $_item->getSku() ?>"
+                            data-mage-init='{"example-modal": {"target": "#modal-content"}}'>
+                        <?php echo 'Cancel Item'  ?>
+                    </button>
+                    <div class="show" data-order-id="<?php echo $_item->getItemId(); ?>" ></div>
+                <?php endif;?>
+        <?php else:?>
+            <button id="order-cancellation" class= 'btn btn-secondary order-cancellation'
+                    data-order-id="<?php echo $_item->getItemId(); ?>"
+                    data-order-sku="<?php echo $_item->getSku() ?>"
+                    data-mage-init='{"example-modal": {"target": "#modal-content"}}'>
+                <?php echo 'Cancel Item'  ?>
+            </button>
+            <div class="show" data-order-id="<?php echo $_item->getItemId(); ?>" ></div>
+        <?php endif;?>
+        <?php if ($_options = $block->getItemOptions()): ?>
+            <dl class="item-options">
+                <?php foreach ($_options as $_option): ?>
+                    <dt><?= $escaper->escapeHtml($_option['label']) ?></dt>
+                    <?php if (!$block->getPrintStatus()): ?>
+                        <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+                        <dd<?= (isset($_formatedOptionValue['full_view']) ? ' class="tooltip wrapper"' : '') ?>>
+                            <?= $escaper->escapeHtml($_formatedOptionValue['value'], ['a']) ?>
+                            <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                <div class="tooltip content">
+                                    <dl class="item options">
+                                        <dt><?= $escaper->escapeHtml($_option['label']) ?></dt>
+                                        <dd><?= $escaper->escapeHtml($_formatedOptionValue['full_view']) ?></dd>
+                                    </dl>
+                                </div>
+                            <?php endif; ?>
+                        </dd>
+                    <?php else: ?>
+                        <?php $optionValue = isset($_option['print_value']) ? $_option['print_value'] : $_option['value'] ?>
+                        <dd><?= $escaper->escapeHtml($optionValue) ?></dd>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </dl>
+        <?php endif; ?>
+        <?php $addtInfoBlock = $block->getProductAdditionalInformationBlock(); ?>
+        <?php if ($addtInfoBlock): ?>
+            <?= $addtInfoBlock->setItem($_item)->toHtml() ?>
+        <?php endif; ?>
+        <?= $escaper->escapeHtml($_item->getDescription()) ?>
+    </td>
+    <td class="col sku" data-th="<?= $escaper->escapeHtml(__('SKU')) ?>">
+        <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>
+    </td>
+    <td class="col price" data-th="<?= $escaper->escapeHtml(__('Price')) ?>">
+        <?= $block->getItemPriceHtml() ?>
+    </td>
+    <td class="col qty" data-th="<?= $escaper->escapeHtml(__('Qty')) ?>">
+        <ul class="items-qty">
+            <?php if ($block->getItem()->getQtyOrdered() > 0): ?>
+                <li class="item">
+                    <span class="title"><?= $escaper->escapeHtml(__('Ordered')) ?></span>
+                    <span class="content">
+                    <?= $escaper->escapeHtml($localeFormatter->formatNumber((float) $block->getItem()->getQtyOrdered()))?>
+                </span>
+                </li>
+            <?php endif; ?>
+            <?php if ($block->getItem()->getQtyShipped() > 0): ?>
+                <li class="item">
+                    <span class="title"><?= $escaper->escapeHtml(__('Shipped')) ?></span>
+                    <span class="content">
+                    <?= $escaper->escapeHtml($localeFormatter->formatNumber((float) $block->getItem()->getQtyShipped()))?>
+                </span>
+                </li>
+            <?php endif; ?>
+            <?php if ($block->getItem()->getQtyCanceled() > 0): ?>
+                <li class="item">
+                    <span class="title"><?= $escaper->escapeHtml(__('Canceled')) ?></span>
+                    <span class="content">
+                    <?= $escaper->escapeHtml(
+    $localeFormatter->formatNumber((float) $block->getItem()->getQtyCanceled())
+)?>
+                </span>
+                </li>
+            <?php endif; ?>
+            <?php if ($block->getItem()->getQtyRefunded() > 0): ?>
+                <li class="item">
+                    <span class="title"><?= $escaper->escapeHtml(__('Refunded')) ?></span>
+                    <span class="content">
+                    <?= $escaper->escapeHtml(
+    $localeFormatter->formatNumber((float) $block->getItem()->getQtyRefunded())
+)?>
+                </span>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </td>
+    <td class="col subtotal" data-th="<?= $escaper->escapeHtml(__('Subtotal')) ?>">
+        <?= $block->getItemRowTotalHtml() ?>
+    </td>
+</tr>
+<div id="devhub-cancel-order-modal" style="display: none;">
+    <form action="" class="form cancel-order" id="devhub-cancellation-form" method="post"
+          data-hasrequired="<?= $escaper->escapeHtml(__('* Required Fields')) ?>"
+          data-mage-init='{"validation":{}}'>
+        <fieldset class="fieldset">
+            <div class="control">
+                <p><?php echo __("Do you want to send the item cancellation request?"); ?></p>
+            </div>
+            <div class="control">
+                <input type="hidden" name="devhub-cancel-order-id" value="" class="devhub-cancel-order-id">
+                <?php $formKey = $block->getFormKey()?>
+                <input type="hidden" name="form_key" value="" class="form_key">
+                <input type="hidden" name="order-cancellation" value="" class="order-cancellation-id">
+                <input type="hidden" name="sku" value="" class="order-cancellation-sku">
+            </div>
+            <div class="field required">
+                <div class="control">
+                    <label>
+                        <textarea class="devhub-cancel-order-reason input-text" name="devhub-cancel-order-reason" data-validate="{required:true}"></textarea>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
